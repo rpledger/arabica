@@ -3,6 +3,24 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 from threading import Thread
+import serial
+
+serdev = '/dev/tty.usbmodem1412'
+s = serial.Serial(serdev)
+f=open('/Users/rebeccapledger/Documents/roasting/data', 'w',0)
+
+out = ''
+count = 1
+while count < 10:
+	if s.inWaiting() > 0:
+	  out= s.readline()
+	  out= out.rstrip()
+	  out = out.replace('\r','')
+	  data= f.write(out+'\n')
+	  #time.sleep(0.1)
+	  count = count + 1
+
+
 
 #plt.plot([1, 2, 3, 4])
 #plt.ylabel('some numbers')
@@ -31,14 +49,14 @@ def FileWriter():
 		time.sleep(2)
 		k+=1
 
-t1=Thread(target=FileWriter)
-t1.start()
+#t1=Thread(target=FileWriter)
+#t1.start()
 
-fig = plt.figure()
-ax1 = fig.add_subplot(1,1,1)
-ax1.set_xlim(0,20)
-ax1.set_ylim(0,20)
-ax1.set_autoscale_on(False)
+#fig = plt.figure()
+#ax1 = fig.add_subplot(1,1,1)
+#ax1.set_xlim(0,20)
+#ax1.set_ylim(0,20)
+#ax1.set_autoscale_on(False)
 
 def animate(i):
 	pullData = open("data", "r").read()
@@ -63,5 +81,5 @@ def animate(i):
 	ax1.axhline(20,color='k', linestyle='--')
 	ax1.plot(xar,yar)
 
-ani = animation.FuncAnimation(fig, animate, interval=1000)
-plt.show()
+#ani = animation.FuncAnimation(fig, animate, interval=1000)
+#plt.show()
