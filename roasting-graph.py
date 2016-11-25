@@ -40,20 +40,32 @@ import re
 #y = [1,4,9,16,25]
 #plt.plot(x,y)
 #plt.show()
+count = 0
+xar = []
+yar = []
+serdev = '/dev/tty.usbmodem1412'
+s = serial.Serial(serdev)
+#f=open('/Users/rebeccapledger/Documents/roasting/data', 'w',0)
+s.reset_output_buffer()
+s.reset_input_buffer()
 
 def SerialWriter():
-	serdev = '/dev/tty.usbmodem1412'
-	s = serial.Serial(serdev)
-	f=open('/Users/rebeccapledger/Documents/roasting/data', 'w',0)
-	s.reset_output_buffer()
-	s.reset_input_buffer()
+	#serdev = '/dev/tty.usbmodem1412'
+	#s = serial.Serial(serdev)
+	#f=open('/Users/rebeccapledger/Documents/roasting/data', 'w',0)
+	#s.reset_output_buffer()
+	#s.reset_input_buffer()
 
+	global count
 	regex = r"(\d+)\.(\d+)"
 	out = ''
-	count = 0
+	#count = 0
 	startTime = time.time()
-	while count < 20:
+	#while count < 20:
+	s.reset_input_buffer()
+	while 1:
 		if s.inWaiting() > 0:
+		  print s.inWaiting()
 		  out= s.readline()
 		  print "Out: " + out
 		  match = re.search(regex, out)
@@ -63,11 +75,13 @@ def SerialWriter():
 		  	continue
 		  out= out.rstrip()
 		  out = out.replace('\r','')
-		  print "Writing Data"
-		  data= f.write(str(count) + "," + out+'\n')
-		  time.sleep(1)
 		  count = count + 1
-		  s.reset_input_buffer()
+		  print "Writing Data: " + str(count) + " "+ out
+		  return out
+		  #data= f.write(str(count) + "," + out+'\n')
+		  #time.sleep(1)
+		  #count = count + 1
+		  #s.reset_input_buffer()
 	elapsedTime = time.time() - startTime
 	print "Finished in %d", elapsedTime
 
@@ -79,21 +93,38 @@ ax1 = fig.add_subplot(1,1,1)
 ax1.set_xlim(0,100)
 ax1.set_ylim(0,100)
 ax1.set_autoscale_on(False)
+line, = ax1.plot([], lw=2)
+
+#def init():
+#	line.set_data([], [])
+#	return line,
 
 def animate(i):
-	pullData = open("data", "r").read()
-	dataArray = pullData.split('\n')
-	xar = []
-	yar = []
+	#pullData = open("data", "r").read()
+	#dataArray = pullData.split('\n')
+	#xar = []
+	#yar = []
 
-	for eachLine in dataArray:
-		if len(eachLine)>1:
-			x,y = eachLine.split(',')
-			xar.append(int(x))
-			yar.append(int(y))
-			time.sleep(0.01)
-	ax1.clear()
-#	ax1.axvline(5,color='k', linestyle='--')
+	#for eachLine in dataArray:
+	#	if len(eachLine)>1:
+	global count
+	global xar
+	global yar
+	yar.append(SerialWriter())
+	xar.append(count)
+	return plt.plot(xar, yar, color='g')
+	#line.set_data([x, y])
+	#return line,
+			#x,y = eachLine.split(',')
+			#xar.append(int(x))
+			#yar.append(int(y))
+			#time.sleep(0.01)
+	
+	#ax1.clear()
+	#ax1.axhline(80,color='r', linestyle='--')
+	#ax1.plot(xar,yar)
+
+	#	ax1.axvline(5,color='k', linestyle='--')
 #	ax1.axvline(10,color='k', linestyle='--')
 #	ax1.axvline(15,color='k', linestyle='--')
 #	ax1.axvline(20,color='k', linestyle='--')
@@ -101,12 +132,11 @@ def animate(i):
 	# ax1.axhline(5,color='k', linestyle='--')
 	# ax1.axhline(10,color='k', linestyle='--')
 	# ax1.axhline(15,color='k', linestyle='--')
-	# ax1.axhline(20,color='k', linestyle='--')
-	ax1.plot(xar,yar)
 
 
-t1=Thread(target=SerialWriter)
-t1.start()
+#t1=Thread(target=SerialWriter)
+#t1.start()
 #SerialWriter()
-ani = animation.FuncAnimation(fig, animate, interval=1000)
+#init_func=init
+ani = animation.FuncAnimation(fig, animate, frames=10, interval=20, blit=False)
 plt.show()
