@@ -38,7 +38,8 @@ import re
 #y = [1,4,9,16,25]
 #plt.plot(x,y)
 #plt.show()
-count = 0
+count = -1
+crack = False
 xar = []
 yar = []
 serdev = '/dev/tty.usbmodem1412'
@@ -73,7 +74,7 @@ def SerialWriter():
 		  out= out.rstrip()
 		  out = out.replace('\r','')
 		  count = count + 1
-		  print "Plotting Data"
+		  #print "Plotting Data"
 		  return out
 		  #data= f.write(str(count) + "," + out+'\n')
 		  #time.sleep(1)
@@ -85,8 +86,8 @@ def SerialWriter():
 fig = plt.figure()
 #fig.suptitle("Roasting Log", fontsize=14, fontweight='bold')
 ax1 = fig.add_subplot(1,1,1)
-ax1.set_xlim(0,100)
-ax1.set_ylim(60,90)
+ax1.set_xlim(0,800)
+ax1.set_ylim(60,454)
 ax1.set_title("Roasting Log")
 ax1.set_xlabel("Time (sec)")
 ax1.set_ylabel("Temperature (F)")
@@ -109,9 +110,20 @@ def animate(i):
 	global count
 	global xar
 	global yar
+	global crack
 	y = SerialWriter()
 	yar.append(y)
 	xar.append(count)
+
+	if count % 30 == 0:
+		time = float(float(count)/60)
+		print "Time: {:.1f} min" .format(time)
+		print "Temp: " + y + " degrees\n"
+
+	if int(y) > 401 and not crack:
+		crack = True
+		print "FIRST CRACK"
+
 	return plt.plot(xar, yar, color='b')
 	#line.set_data([x, y])
 	#return line,
