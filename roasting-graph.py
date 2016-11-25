@@ -87,7 +87,7 @@ fig = plt.figure()
 #fig.suptitle("Roasting Log", fontsize=14, fontweight='bold')
 ax1 = fig.add_subplot(1,1,1)
 ax1.set_xlim(0,800)
-ax1.set_ylim(60,454)
+ax1.set_ylim(50,454)
 ax1.set_title("Roasting Log")
 ax1.set_xlabel("Time (sec)")
 ax1.set_ylabel("Temperature (F)")
@@ -120,9 +120,10 @@ def animate(i):
 		print "Time: {:.1f} min" .format(time)
 		print "Temp: " + y + " degrees\n"
 
-	if int(y) > 401 and not crack:
+	if int(y) > 75 and not crack:
 		crack = True
 		print "FIRST CRACK"
+		ax1.axvline(count ,color='k', linestyle='--')
 
 	return plt.plot(xar, yar, color='b')
 	#line.set_data([x, y])
