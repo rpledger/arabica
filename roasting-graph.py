@@ -6,8 +6,6 @@ from threading import Thread
 import serial
 import re
 
-
-
 # serdev = '/dev/tty.usbmodem1412'
 # s = serial.Serial(serdev)
 # f=open('/Users/rebeccapledger/Documents/roasting/data', 'w',0)
@@ -65,9 +63,8 @@ def SerialWriter():
 	s.reset_input_buffer()
 	while 1:
 		if s.inWaiting() > 0:
-		  print s.inWaiting()
 		  out= s.readline()
-		  print "Out: " + out
+		  #print "Out: " + out
 		  match = re.search(regex, out)
 		  if match:
 		  	out = match.group(1)
@@ -76,24 +73,26 @@ def SerialWriter():
 		  out= out.rstrip()
 		  out = out.replace('\r','')
 		  count = count + 1
-		  print "Writing Data: " + str(count) + " "+ out
+		  print "Plotting Data"
 		  return out
 		  #data= f.write(str(count) + "," + out+'\n')
 		  #time.sleep(1)
 		  #count = count + 1
 		  #s.reset_input_buffer()
-	elapsedTime = time.time() - startTime
-	print "Finished in %d", elapsedTime
-
 #t1=Thread(target=FileWriter)
 #t1.start()
 
 fig = plt.figure()
+#fig.suptitle("Roasting Log", fontsize=14, fontweight='bold')
 ax1 = fig.add_subplot(1,1,1)
 ax1.set_xlim(0,100)
-ax1.set_ylim(0,100)
+ax1.set_ylim(60,90)
+ax1.set_title("Roasting Log")
+ax1.set_xlabel("Time (sec)")
+ax1.set_ylabel("Temperature (F)")
 ax1.set_autoscale_on(False)
-line, = ax1.plot([], lw=2)
+
+#line, = ax1.plot([], lw=2)
 
 #def init():
 #	line.set_data([], [])
@@ -110,9 +109,10 @@ def animate(i):
 	global count
 	global xar
 	global yar
-	yar.append(SerialWriter())
+	y = SerialWriter()
+	yar.append(y)
 	xar.append(count)
-	return plt.plot(xar, yar, color='g')
+	return plt.plot(xar, yar, color='b')
 	#line.set_data([x, y])
 	#return line,
 			#x,y = eachLine.split(',')
@@ -138,5 +138,5 @@ def animate(i):
 #t1.start()
 #SerialWriter()
 #init_func=init
-ani = animation.FuncAnimation(fig, animate, frames=10, interval=20, blit=False)
+ani = animation.FuncAnimation(fig, animate, frames=10, interval=1000, blit=False)
 plt.show()
