@@ -1,10 +1,14 @@
 import numpy as np
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 from threading import Thread
 import serial
 import re
+import pickle
+from Tkinter import Tk, Frame, BOTH
 
 # serdev = '/dev/tty.usbmodem1412'
 # s = serial.Serial(serdev)
@@ -38,6 +42,28 @@ import re
 #y = [1,4,9,16,25]
 #plt.plot(x,y)
 #plt.show()
+class Example(Frame):
+	def __init__(self, parent):
+		Frame.__init__(self, parent, background="white")
+
+		self.parent = parent
+
+		self.initUI()
+
+	def initUI(self):
+		self.parent.title("Simple")
+		self.pack(fill=BOTH, expand=1)
+
+def main():
+ 	root = Tk()
+ 	#w = tk.Label(root, text="Hello, World!")
+ 	root.geometry("250x150+300+300")
+ 	app = Example(root)
+ 	root.mainloop()
+
+if __name__ == '__main__':
+ 	main()
+
 count = -1
 crack = False
 xar = []
@@ -111,21 +137,24 @@ def animate(i):
 	global xar
 	global yar
 	global crack
-	y = SerialWriter()
-	yar.append(y)
-	xar.append(count)
+	try:
+		y = SerialWriter()
+		yar.append(y)
+		xar.append(count)
 
-	if count % 30 == 0:
-		time = float(float(count)/60)
-		print "Time: {:.1f} min" .format(time)
-		print "Temp: " + y + " degrees\n"
+		if count % 30 == 0:
+			time = float(float(count)/60)
+			print "Time: {:.1f} min" .format(time)
+			print "Temp: " + y + " degrees\n"
 
-	if int(y) > 75 and not crack:
-		crack = True
-		print "FIRST CRACK"
-		ax1.axvline(count ,color='k', linestyle='--')
+		if int(y) > 75 and not crack:
+			crack = True
+			print "FIRST CRACK"
+			ax1.axvline(count ,color='k', linestyle='--')
 
-	return plt.plot(xar, yar, color='b')
+		return plt.plot(xar, yar, color='b')
+	except KeyboardInterrupt:
+		print "Exiting"
 	#line.set_data([x, y])
 	#return line,
 			#x,y = eachLine.split(',')
@@ -151,5 +180,6 @@ def animate(i):
 #t1.start()
 #SerialWriter()
 #init_func=init
-ani = animation.FuncAnimation(fig, animate, frames=10, interval=1000, blit=False)
+ani = animation.FuncAnimation(fig, animate, frames=100, interval=1000, blit=False)
+pickle.dump(ax1, file('myplot.pickle', w))
 plt.show()
