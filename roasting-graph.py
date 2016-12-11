@@ -8,7 +8,6 @@ from threading import Thread
 import serial
 import re
 import pickle
-from Tkinter import Tk, Frame, BOTH
 
 # serdev = '/dev/tty.usbmodem1412'
 # s = serial.Serial(serdev)
@@ -42,27 +41,6 @@ from Tkinter import Tk, Frame, BOTH
 #y = [1,4,9,16,25]
 #plt.plot(x,y)
 #plt.show()
-class Example(Frame):
-	def __init__(self, parent):
-		Frame.__init__(self, parent, background="white")
-
-		self.parent = parent
-
-		self.initUI()
-
-	def initUI(self):
-		self.parent.title("Simple")
-		self.pack(fill=BOTH, expand=1)
-
-def main():
- 	root = Tk()
- 	#w = tk.Label(root, text="Hello, World!")
- 	root.geometry("250x150+300+300")
- 	app = Example(root)
- 	root.mainloop()
-
-if __name__ == '__main__':
- 	main()
 
 count = -1
 crack = False
