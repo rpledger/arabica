@@ -1,6 +1,9 @@
 import Tkinter as tk
-#from ttk import Frame, Button, Style
 import matplotlib
+matplotlib.use("TkAgg")
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 
 LARGE_FONT = ("Veranda", 12)
 
@@ -34,11 +37,19 @@ def qf():
 class GraphPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Graph Page", font=LARGE_FONT)
+		label = tk.Label(self, text="Arabica Roasting Logger", font=LARGE_FONT)
 		label.pack(pady=10, padx=10)
 
-		button1 = tk.Button(self, text="Visit Page 1", command=qf)
+		button1 = tk.Button(self, text="Button Example", command=qf)
 		button1.pack()
+
+		f = Figure(figsize=(5,5), dpi=100)
+		a = f.add_subplot(111)
+		a.plot([1,2,3,4,5,6,7,8], [5,6,2,4,6,8,3,5])
+
+		canvas = FigureCanvasTkAgg(f, self)
+		canvas.show()
+		canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 app = ArabicaApp()
 app.mainloop()	
