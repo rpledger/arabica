@@ -28,11 +28,17 @@ class ArabicaApp(tk.Tk):
 		frame = self.frames[cont]
 		frame.tkraise()
 
+def qf():
+	print ("you did it!")
+
 class GraphPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 		label = tk.Label(self, text="Graph Page", font=LARGE_FONT)
 		label.pack(pady=10, padx=10)
+
+		button1 = tk.Button(self, text="Visit Page 1", command=qf)
+		button1.pack()
 
 app = ArabicaApp()
 app.mainloop()	
