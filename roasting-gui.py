@@ -1,11 +1,30 @@
 import Tkinter as tk
 import matplotlib
 matplotlib.use("TkAgg")
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+style.use('ggplot')
 
 LARGE_FONT = ("Veranda", 12)
+
+f = Figure(figsize=(5,5), dpi=100)
+a = f.add_subplot(111)
+
+def animate(i):
+	pullData = open("data", "r").read()
+	dataList = pullData.split('\n')
+	xList = []
+	yList = []
+	for eachLine in dataList:
+		if len(eachLine)>1:
+			x, y = eachLine.split(',')
+			xList.append(int(x))
+			yList.append(int(y))
+
+	a.clear()
+	a.plot(xList, yList)
 
 class ArabicaApp(tk.Tk):
 	def __init__(self, *args, **kwargs):
@@ -43,10 +62,6 @@ class GraphPage(tk.Frame):
 		button1 = tk.Button(self, text="Button Example", command=qf)
 		button1.pack()
 
-		f = Figure(figsize=(5,5), dpi=100)
-		a = f.add_subplot(111)
-		a.plot([1,2,3,4,5,6,7,8], [5,6,2,4,6,8,3,5])
-
 		canvas = FigureCanvasTkAgg(f, self)
 		canvas.show()
 		canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -56,6 +71,7 @@ class GraphPage(tk.Frame):
 		canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 app = ArabicaApp()
+ani = animation.FuncAnimation(f, animate, interval=1000)
 app.mainloop()	
 
 #class Example(Frame):
