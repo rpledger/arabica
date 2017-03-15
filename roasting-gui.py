@@ -23,7 +23,7 @@ def SerialWriter():
 	s.reset_output_buffer()
 	s.reset_input_buffer()
 	regex = r"(\d+)\.(\d+)"
-	while 1:
+	for i in range(0,10):
 		if s.inWaiting() > 0:
 			out = s.readline()
 			match = re.search(regex, out)
@@ -32,6 +32,7 @@ def SerialWriter():
 				out = out.rstrip()
 				out = out.replace('\r', '')
 				data.write("{},{}\n".format(t, out))
+	thread.exit()
 
 def animate(i):
 	pullData = open("data", "r").read()
