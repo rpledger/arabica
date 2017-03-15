@@ -6,11 +6,32 @@ from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from matplotlib import style
 style.use('ggplot')
+from threading import Thread
+import time
+import serial
 
 LARGE_FONT = ("Veranda", 12)
 
 f = Figure(figsize=(5,5), dpi=100)
 a = f.add_subplot(111)
+
+serdev = '/dev/tty.usbmodem1412'
+
+def SerialWriter():
+	s = serial.Serial(serdev)
+	data=open('data', 'w')
+	s.reset_output_buffer()
+	s.reset_input_buffer()
+	regex = r"(\d+)\.(\d+)"
+	while 1:
+		if s.inWaiting() > 0:
+			out = s.readline()
+			match = re.search(regex, out)
+			if match:
+				out = match.group(1)
+				out = out.rstrip()
+				out = out.replace('\r', '')
+				data.write("{},{}\n".format(t, out))
 
 def animate(i):
 	pullData = open("data", "r").read()
@@ -70,6 +91,9 @@ class GraphPage(tk.Frame):
 		toolbar.update()
 		canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
+t1 = Thread(target=SerialWriter)
+startTime = time.time()
+t1.start()
 app = ArabicaApp()
 ani = animation.FuncAnimation(f, animate, interval=1000)
 app.mainloop()	
