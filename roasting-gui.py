@@ -21,6 +21,9 @@ s = serial.Serial(serdev)
 s.reset_output_buffer()
 s.reset_input_buffer()
 
+time_elapsed = 0
+start_time = 0
+
 def SerialWriter():
 	#s = serial.Serial(serdev)
 	#data=open('data', 'w')
@@ -28,7 +31,7 @@ def SerialWriter():
 	#s.reset_input_buffer()
 	open('data', 'w').close()
 	regex = r"(\d+)\.(\d+)"
-	for i in range(0,200):
+	for i in range(0,20):
 		if s.inWaiting() > 0:
 			out = s.readline()
 			match = re.search(regex, out)
@@ -103,9 +106,23 @@ class GraphPage(tk.Frame):
 		toolbar.update()
 		canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
+		self.display_time = tk.Label(self, text=time_elapsed)
+		self.display_time.pack()
+
+		def display_elapsed():
+			global time_elapsed
+			global start_time
+			new_time_elapsed = time.time() - start_time
+			if new_time_elapsed != time_elapsed:
+				time_elapsed = "{0:.2f}".format(new_time_elapsed)
+				self.display_time.config(text=time_elapsed)
+				self.display_time.after(200, display_elapsed)
+
+		display_elapsed()
+
 t1 = Thread(target=SerialWriter)
 print "1"
-startTime = time.time()
+start_time = time.time()
 print "2"
 t1.start()
 print "3"
