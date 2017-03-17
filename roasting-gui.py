@@ -9,6 +9,7 @@ style.use('ggplot')
 from threading import Thread
 import time
 import serial
+import re
 
 LARGE_FONT = ("Veranda", 12)
 
@@ -16,14 +17,18 @@ f = Figure(figsize=(5,5), dpi=100)
 a = f.add_subplot(111)
 
 serdev = '/dev/tty.usbmodem1412'
+s = serial.Serial(serdev)
+s.reset_output_buffer()
+s.reset_input_buffer()
 
 def SerialWriter():
-	s = serial.Serial(serdev)
-	data=open('data', 'w')
-	s.reset_output_buffer()
-	s.reset_input_buffer()
+	#s = serial.Serial(serdev)
+	#data=open('data', 'w')
+	#s.reset_output_buffer()
+	#s.reset_input_buffer()
+	open('data', 'w').close()
 	regex = r"(\d+)\.(\d+)"
-	for i in range(0,10):
+	for i in range(0,200):
 		if s.inWaiting() > 0:
 			out = s.readline()
 			match = re.search(regex, out)
@@ -31,8 +36,13 @@ def SerialWriter():
 				out = match.group(1)
 				out = out.rstrip()
 				out = out.replace('\r', '')
-				data.write("{},{}\n".format(t, out))
-	thread.exit()
+				data=open('data', 'a')
+				data.write("{},{}\n".format(i, out))
+				data.close()
+		time.sleep(1)
+	#s.close()
+	#data.close()
+	#thread.exit()
 
 def animate(i):
 	pullData = open("data", "r").read()
@@ -47,6 +57,7 @@ def animate(i):
 
 	a.clear()
 	a.plot(xList, yList)
+	print "X: {}, Y:{}".format(xList, yList)
 
 class ArabicaApp(tk.Tk):
 	def __init__(self, *args, **kwargs):
@@ -93,11 +104,17 @@ class GraphPage(tk.Frame):
 		canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 t1 = Thread(target=SerialWriter)
+print "1"
 startTime = time.time()
+print "2"
 t1.start()
+print "3"
 app = ArabicaApp()
-ani = animation.FuncAnimation(f, animate, interval=1000)
+print "4"
+ani = animation.FuncAnimation(f, animate, frames=100, interval=1000, blit=False)
+print "5"
 app.mainloop()	
+print "6"
 
 #class Example(Frame):
 #	def __init__(self, parent):
