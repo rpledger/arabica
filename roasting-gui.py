@@ -1,4 +1,5 @@
 import Tkinter as tk
+import tkFileDialog
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
@@ -51,6 +52,23 @@ def animate(i):
 
 	#print "X: {}, Y:{}".format(xList, yList)
 
+#def popupsave():
+	#return tkFileDialog.asksaveasfile(mode='w', **file_opt)
+	#popup = tk.Tk()
+	#popup.wm_title("Save")
+	#label1 = tk.Label(popup, text="Filename", font=LARGE_FONT)
+	#label1.pack(side="top", fill="x", pady=10)
+	#entry1 = tk.Entry(popup)
+	#entry1.pack()
+	#save = tk.Button(popup, text="Save", command=lambda: self.save_file(entry1.get(), popup))
+	#save.pack()
+
+def save_file(file, popup):
+	outfile = file + '.pickle'
+	pickle.dump(a, open(outfile, 'w'))
+	#saved_label = tk.Label(self, text="Saved!", font=LARGE_FONT)
+	#saved_label.pack(side=tk.BOTTOM)
+	popup.destroy()
 
 class ArabicaApp(tk.Tk):
 	def __init__(self, *args, **kwargs):
@@ -62,6 +80,15 @@ class ArabicaApp(tk.Tk):
 		container.grid_rowconfigure(0, weight=1)
 		container.grid_columnconfigure(0, weight=1)
 
+		menubar = tk.Menu(container)
+		filemenu = tk.Menu(menubar, tearoff=0)
+		filemenu.add_command(label="Save", command=self.popupsave)
+		filemenu.add_separator()
+		filemenu.add_command(label="Exit", command=quit)
+		menubar.add_cascade(label="File", menu=filemenu)
+
+		tk.Tk.config(self, menu=menubar)
+
 		self.frames = {}
 
 		frame = GraphPage(container, self)
@@ -72,9 +99,22 @@ class ArabicaApp(tk.Tk):
 
 		self.show_frame(GraphPage)
 
+		self.file_opt = options = {}
+		options['defaultextension'] = '.pickle'
+		options['filetypes'] = [('all files', ".*"), ('pickle files', '.pickle')]
+		options['initialdir'] = 'C:\\'
+		options['initialfile'] = 'myPlot.pickle'
+		options['parent'] = container
+		options['title'] = 'This is a title'
+
 	def show_frame(self, cont):
 		frame = self.frames[cont]
 		frame.tkraise()
+
+	def popupsave(self):
+		outfile = tkFileDialog.asksaveasfile(mode='w', **self.file_opt)
+		pickle.dump(a, outfile)
+		outfile.close()
 
 
 class GraphPage(tk.Frame):
@@ -82,11 +122,6 @@ class GraphPage(tk.Frame):
 		tk.Frame.__init__(self, parent)
 		label = tk.Label(self, text="Arabica Roasting Logger", font=LARGE_FONT)
 		label.pack(pady=10, padx=10)
-
-		#menubar = tk.Menu(self)
-		#menubar.add_command(label="Hello!")
-		#menubar.add_command(label="Quit!")
-		#self.config(menu=menubar)
 
 		button1 = tk.Button(self, text="Start", command=lambda: self.set_event('start'))
 		button1.pack()
@@ -106,25 +141,8 @@ class GraphPage(tk.Frame):
 	def set_event(self, cmd):
 		global event
 		event = cmd
-		if cmd == 'stop':
-			self.popupsave()
 
-	def popupsave(self):
-		popup = tk.Tk()
-		popup.wm_title("Save")
-		label1 = tk.Label(popup, text="Filename", font=LARGE_FONT)
-		label1.pack(side="top", fill="x", pady=10)
-		entry1 = tk.Entry(popup)
-		entry1.pack()
-		save = tk.Button(popup, text="Save", command=lambda: self.save_file(entry1.get(), popup))
-		save.pack()
 
-	def save_file(self, file, popup):
-		outfile = file + '.pickle'
-		pickle.dump(a, open(outfile, 'w'))
-		saved_label = tk.Label(self, text="Saved!", font=LARGE_FONT)
-		saved_label.pack(side=tk.BOTTOM)
-		popup.destroy()
 		#self.display_time = tk.Label(self, text=time_elapsed)
 		#self.display_time.pack()
 
