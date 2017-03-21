@@ -94,8 +94,9 @@ class ArabicaApp(tk.Tk):
 
 	def popupsave(self):
 		outfile = tkFileDialog.asksaveasfile(mode='w', **self.file_opt)
-		pickle.dump(a, outfile)
-		outfile.close()
+		if outfile:
+			pickle.dump(a, outfile)
+			outfile.close()
 
 
 class GraphPage(tk.Frame):
@@ -108,8 +109,8 @@ class GraphPage(tk.Frame):
 		button1.pack()
 		button2 = tk.Button(self, text="Pause", command=lambda: self.set_event('pause'))
 		button2.pack()
-		button3 = tk.Button(self, text="Stop", command=lambda: self.set_event('stop'))
-		button3.pack()
+		#button3 = tk.Button(self, text="Stop", command=lambda: self.set_event('stop'))
+		#button3.pack()
 
 		canvas = FigureCanvasTkAgg(f, self)
 		canvas.show()
