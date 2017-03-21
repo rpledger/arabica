@@ -23,6 +23,10 @@ s.reset_input_buffer()
 
 time_elapsed = 0
 start_time = 0
+counter = 0
+
+xList = []
+yList = []
 
 def SerialWriter():
 	#s = serial.Serial(serdev)
@@ -48,19 +52,27 @@ def SerialWriter():
 	#thread.exit()
 
 def animate(i):
-	pullData = open("data", "r").read()
-	dataList = pullData.split('\n')
-	xList = []
-	yList = []
-	for eachLine in dataList:
-		if len(eachLine)>1:
-			x, y = eachLine.split(',')
-			xList.append(int(x))
-			yList.append(int(y))
+	#pullData = open("data", "r").read()
+	global counter
+	s.flushInput()
+	temp = s.readline()
+	temp = temp.rstrip()
+	temp = temp.replace('\n', '')
+	print temp
+	#dataList = pullData.split('\n')
+	#xList = []
+	#yList = []
+	#for eachLine in dataList:
+	#	if len(eachLine)>1:
+	#x, y = line.split('.')
+	xList.append(int(counter))
+	yList.append(int(float(temp)))
 
 	a.clear()
 	a.plot(xList, yList)
+	counter += 1
 	print "X: {}, Y:{}".format(xList, yList)
+
 
 class ArabicaApp(tk.Tk):
 	def __init__(self, *args, **kwargs):
@@ -120,18 +132,12 @@ class GraphPage(tk.Frame):
 
 		display_elapsed()
 
-t1 = Thread(target=SerialWriter)
-print "1"
+#t1 = Thread(target=SerialWriter)
 start_time = time.time()
-print "2"
-t1.start()
-print "3"
+#t1.start()
 app = ArabicaApp()
-print "4"
-ani = animation.FuncAnimation(f, animate, frames=100, interval=1000, blit=False)
-print "5"
+ani = animation.FuncAnimation(f, animate, interval=1000)
 app.mainloop()	
-print "6"
 
 #class Example(Frame):
 #	def __init__(self, parent):
