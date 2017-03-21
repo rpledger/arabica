@@ -10,6 +10,7 @@ from threading import Thread
 import time
 import serial
 import re
+import pickle
 
 LARGE_FONT = ("Veranda", 12)
 
@@ -44,8 +45,10 @@ def animate(i):
 		a.clear()
 		a.plot(xList, yList)
 		counter += 1
-	elif event == 'stop':
-		quit()
+	#elif event == 'stop':
+		#pickle.dump(a, file('myplot.pickle', 'w'))
+		#quit()
+
 	#print "X: {}, Y:{}".format(xList, yList)
 
 
@@ -73,9 +76,6 @@ class ArabicaApp(tk.Tk):
 		frame = self.frames[cont]
 		frame.tkraise()
 
-def set_event(cmd):
-	global event
-	event = cmd
 
 class GraphPage(tk.Frame):
 	def __init__(self, parent, controller):
@@ -83,11 +83,11 @@ class GraphPage(tk.Frame):
 		label = tk.Label(self, text="Arabica Roasting Logger", font=LARGE_FONT)
 		label.pack(pady=10, padx=10)
 
-		button1 = tk.Button(self, text="Start", command=lambda: set_event('start'))
+		button1 = tk.Button(self, text="Start", command=lambda: self.set_event('start'))
 		button1.pack()
-		button2 = tk.Button(self, text="Pause", command=lambda: set_event('pause'))
+		button2 = tk.Button(self, text="Pause", command=lambda: self.set_event('pause'))
 		button2.pack()
-		button3 = tk.Button(self, text="Stop", command=lambda: set_event('stop'))
+		button3 = tk.Button(self, text="Stop", command=lambda: self.set_event('stop'))
 		button3.pack()
 
 		canvas = FigureCanvasTkAgg(f, self)
@@ -98,6 +98,24 @@ class GraphPage(tk.Frame):
 		toolbar.update()
 		canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
+	def set_event(self, cmd):
+		global event
+		event = cmd
+		if cmd == 'stop':
+			toplevel = tk.Toplevel()
+			label1 = tk.Label(toplevel, text="Filename", font=LARGE_FONT)
+			label1.pack(pady=10, padx=10)
+			entry1 = tk.Entry(toplevel)
+			entry1.pack()
+			save = tk.Button(toplevel, text="Save", command=lambda: self.save_file(entry1.get(), toplevel))
+			save.pack()
+
+	def save_file(self, file, frame):
+		outfile = file + '.pickle'
+		pickle.dump(a, open(outfile, 'w'))
+		saved_label = tk.Label(self, text="Saved!", font=LARGE_FONT)
+		saved_label.pack(side=tk.BOTTOM)
+		frame.destroy()
 		#self.display_time = tk.Label(self, text=time_elapsed)
 		#self.display_time.pack()
 
