@@ -83,6 +83,11 @@ class GraphPage(tk.Frame):
 		label = tk.Label(self, text="Arabica Roasting Logger", font=LARGE_FONT)
 		label.pack(pady=10, padx=10)
 
+		#menubar = tk.Menu(self)
+		#menubar.add_command(label="Hello!")
+		#menubar.add_command(label="Quit!")
+		#self.config(menu=menubar)
+
 		button1 = tk.Button(self, text="Start", command=lambda: self.set_event('start'))
 		button1.pack()
 		button2 = tk.Button(self, text="Pause", command=lambda: self.set_event('pause'))
@@ -102,20 +107,24 @@ class GraphPage(tk.Frame):
 		global event
 		event = cmd
 		if cmd == 'stop':
-			toplevel = tk.Toplevel()
-			label1 = tk.Label(toplevel, text="Filename", font=LARGE_FONT)
-			label1.pack(pady=10, padx=10)
-			entry1 = tk.Entry(toplevel)
-			entry1.pack()
-			save = tk.Button(toplevel, text="Save", command=lambda: self.save_file(entry1.get(), toplevel))
-			save.pack()
+			self.popupsave()
 
-	def save_file(self, file, frame):
+	def popupsave(self):
+		popup = tk.Tk()
+		popup.wm_title("Save")
+		label1 = tk.Label(popup, text="Filename", font=LARGE_FONT)
+		label1.pack(side="top", fill="x", pady=10)
+		entry1 = tk.Entry(popup)
+		entry1.pack()
+		save = tk.Button(popup, text="Save", command=lambda: self.save_file(entry1.get(), popup))
+		save.pack()
+
+	def save_file(self, file, popup):
 		outfile = file + '.pickle'
 		pickle.dump(a, open(outfile, 'w'))
 		saved_label = tk.Label(self, text="Saved!", font=LARGE_FONT)
 		saved_label.pack(side=tk.BOTTOM)
-		frame.destroy()
+		popup.destroy()
 		#self.display_time = tk.Label(self, text=time_elapsed)
 		#self.display_time.pack()
 
