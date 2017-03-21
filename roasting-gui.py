@@ -28,29 +28,6 @@ counter = 0
 xList = []
 yList = []
 
-def SerialWriter():
-	#s = serial.Serial(serdev)
-	#data=open('data', 'w')
-	#s.reset_output_buffer()
-	#s.reset_input_buffer()
-	open('data', 'w').close()
-	regex = r"(\d+)\.(\d+)"
-	for i in range(0,20):
-		if s.inWaiting() > 0:
-			out = s.readline()
-			match = re.search(regex, out)
-			if match:
-				out = match.group(1)
-				out = out.rstrip()
-				out = out.replace('\r', '')
-				data=open('data', 'a')
-				data.write("{},{}\n".format(i, out))
-				data.close()
-		time.sleep(1)
-	#s.close()
-	#data.close()
-	#thread.exit()
-
 def animate(i):
 	#pullData = open("data", "r").read()
 	global counter
