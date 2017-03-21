@@ -32,7 +32,6 @@ xList = []
 yList = []
 
 def animate(i):
-	#pullData = open("data", "r").read()
 	global counter
 	if event == 'start':
 		s.flushInput()
@@ -46,28 +45,10 @@ def animate(i):
 		a.clear()
 		a.plot(xList, yList)
 		counter += 1
-	#elif event == 'stop':
-		#pickle.dump(a, file('myplot.pickle', 'w'))
-		#quit()
-
-	#print "X: {}, Y:{}".format(xList, yList)
-
-#def popupsave():
-	#return tkFileDialog.asksaveasfile(mode='w', **file_opt)
-	#popup = tk.Tk()
-	#popup.wm_title("Save")
-	#label1 = tk.Label(popup, text="Filename", font=LARGE_FONT)
-	#label1.pack(side="top", fill="x", pady=10)
-	#entry1 = tk.Entry(popup)
-	#entry1.pack()
-	#save = tk.Button(popup, text="Save", command=lambda: self.save_file(entry1.get(), popup))
-	#save.pack()
 
 def save_file(file, popup):
 	outfile = file + '.pickle'
 	pickle.dump(a, open(outfile, 'w'))
-	#saved_label = tk.Label(self, text="Saved!", font=LARGE_FONT)
-	#saved_label.pack(side=tk.BOTTOM)
 	popup.destroy()
 
 class ArabicaApp(tk.Tk):
@@ -157,38 +138,7 @@ class GraphPage(tk.Frame):
 
 		#display_elapsed()
 
-#t1 = Thread(target=SerialWriter)
 start_time = time.time()
-#t1.start()
 app = ArabicaApp()
 ani = animation.FuncAnimation(f, animate, interval=1000)
 app.mainloop()	
-
-#class Example(Frame):
-#	def __init__(self, parent):
-#		Frame.__init__(self, parent)
-#
-#		self.parent = parent
-#		self.initUI()
-#
-#	def initUI(self):
-
-#		sw = self.parent.title = ("Quit Button")
-#		self.style = Style()
-#		self.style.theme_use("default")
-		
-#		self.pack(fill=BOTH, expand=1)
-
-#		quitButton = Button(self, text="Quit",
-#			command=self.quit)
-#		quitButton.place(x=50, y=50)
-
-#def main():
-# 	root = Tk()
- 	#w = tk.Label(root, text="Hello, World!")
-# 	root.geometry("250x150+300+300")
-# 	app = Example(root)
-# 	root.mainloop()
-
-#if __name__ == '__main__':
-# 	main()
