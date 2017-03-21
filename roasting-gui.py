@@ -24,6 +24,7 @@ s.reset_input_buffer()
 time_elapsed = 0
 start_time = 0
 counter = 0
+event = 'pause'
 
 xList = []
 yList = []
@@ -31,24 +32,21 @@ yList = []
 def animate(i):
 	#pullData = open("data", "r").read()
 	global counter
-	s.flushInput()
-	temp = s.readline()
-	temp = temp.rstrip()
-	temp = temp.replace('\n', '')
-	print temp
-	#dataList = pullData.split('\n')
-	#xList = []
-	#yList = []
-	#for eachLine in dataList:
-	#	if len(eachLine)>1:
-	#x, y = line.split('.')
-	xList.append(int(counter))
-	yList.append(int(float(temp)))
+	if event == 'start':
+		s.flushInput()
+		temp = s.readline()
+		temp = temp.rstrip()
+		temp = temp.replace('\n', '')
 
-	a.clear()
-	a.plot(xList, yList)
-	counter += 1
-	print "X: {}, Y:{}".format(xList, yList)
+		xList.append(int(counter))
+		yList.append(int(float(temp)))
+
+		a.clear()
+		a.plot(xList, yList)
+		counter += 1
+	elif event == 'stop':
+		quit()
+	#print "X: {}, Y:{}".format(xList, yList)
 
 
 class ArabicaApp(tk.Tk):
@@ -75,8 +73,9 @@ class ArabicaApp(tk.Tk):
 		frame = self.frames[cont]
 		frame.tkraise()
 
-def qf():
-	print ("you did it!")
+def set_event(cmd):
+	global event
+	event = cmd
 
 class GraphPage(tk.Frame):
 	def __init__(self, parent, controller):
@@ -84,8 +83,12 @@ class GraphPage(tk.Frame):
 		label = tk.Label(self, text="Arabica Roasting Logger", font=LARGE_FONT)
 		label.pack(pady=10, padx=10)
 
-		button1 = tk.Button(self, text="Button Example", command=qf)
+		button1 = tk.Button(self, text="Start", command=lambda: set_event('start'))
 		button1.pack()
+		button2 = tk.Button(self, text="Pause", command=lambda: set_event('pause'))
+		button2.pack()
+		button3 = tk.Button(self, text="Stop", command=lambda: set_event('stop'))
+		button3.pack()
 
 		canvas = FigureCanvasTkAgg(f, self)
 		canvas.show()
@@ -95,19 +98,19 @@ class GraphPage(tk.Frame):
 		toolbar.update()
 		canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-		self.display_time = tk.Label(self, text=time_elapsed)
-		self.display_time.pack()
+		#self.display_time = tk.Label(self, text=time_elapsed)
+		#self.display_time.pack()
 
-		def display_elapsed():
-			global time_elapsed
-			global start_time
-			new_time_elapsed = time.time() - start_time
-			if new_time_elapsed != time_elapsed:
-				time_elapsed = "{0:.2f}".format(new_time_elapsed)
-				self.display_time.config(text=time_elapsed)
-				self.display_time.after(200, display_elapsed)
+		#def display_elapsed():
+		#	global time_elapsed
+		#	global start_time
+		#	new_time_elapsed = time.time() - start_time
+		#	if new_time_elapsed != time_elapsed:
+		#		time_elapsed = "{0:.2f}".format(new_time_elapsed)
+		#		self.display_time.config(text=time_elapsed)
+		#		self.display_time.after(200, display_elapsed)
 
-		display_elapsed()
+		#display_elapsed()
 
 #t1 = Thread(target=SerialWriter)
 start_time = time.time()
